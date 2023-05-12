@@ -212,6 +212,6 @@ def my_app(wide_layout:bool=False): #
         st.success("Alert Status")
         #message = {"Number of Car at T3":v13, "Number of Plane at T3": v23}
         message = "{} Cars and {} Planes are Detected at T3.".format(v13,v23)
-        alerts(message)
+        #alerts(message)
         st.write(message)
        # print('My name is {} and I am {} years old.'.format(name, age))
