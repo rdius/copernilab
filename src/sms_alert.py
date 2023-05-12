@@ -3,7 +3,7 @@ from twilio.rest import Client
 
 # Twilio account details
 account_sid = 'ACfe817d3c54b17f574510d0f378903547'
-auth_token = '56dc4aa3cf71b00307f040bde1219622'
+auth_token = 'f8ded4029057a2e427403932fc3ba597'
 client = Client(account_sid, auth_token)
 
 

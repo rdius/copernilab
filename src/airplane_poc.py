@@ -79,7 +79,7 @@ def alerts(content):
     st.write('Alerts ZONE')
     #receiver_no = st.number_input('Insert a number')
     #st.write('The current number is ', receiver_no)
-    alert = send_sms(['+33766121245',"+22670077550"], content)
+    alert = send_sms(['+33766121245'], content)
     #st.write(alert)
     #return None
 
@@ -165,7 +165,7 @@ def my_app(wide_layout:bool=False): #
     obj2t3 = "data/luxt3airplane.geojson"
 
     if option =="Luxemb Airport":
-        m = lf.Map(center=[49.634341, 6.22118],zoom=15, google_map="HYBRID")
+        m = lf.Map(center=[49.634341, 6.22118],zoom=15, google_map="SATELLITE") #SATELLITE , HYBRID
         if selected_date == "T1":
             m.add_geojson("data/luxt1car.geojson", layer_name="Cars", style=car_style, hover_style=hover_style)
             m.add_geojson("data/luxt1airplane.geojson", layer_name="Airplanes", style=plane_style, hover_style=hover_style)
@@ -212,6 +212,6 @@ def my_app(wide_layout:bool=False): #
         st.success("Alert Status")
         #message = {"Number of Car at T3":v13, "Number of Plane at T3": v23}
         message = "{} Cars and {} Planes are Detected at T3.".format(v13,v23)
-        #alerts(message)
+        alerts(message)
         st.write(message)
        # print('My name is {} and I am {} years old.'.format(name, age))
