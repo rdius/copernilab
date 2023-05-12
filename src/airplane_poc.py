@@ -11,7 +11,7 @@ from src.sms_alert import send_sms
 
 DEFAULT_MAP_SPECS = dict(height=450, width=600)  # in px
 APP_TITLE = 'SURVEILLANCE'
-LOGO = "https://technatium.com/wp-content/uploads/2022/09/cropped-TECHNATIUM-LOGO-SANSFOND.png"
+LOGO = ""# "https://technatium.com/wp-content/uploads/2022/09/cropped-TECHNATIUM-LOGO-SANSFOND.png"
 
 
 def add_code_logo(logowidth: str = "500px"):
@@ -67,13 +67,13 @@ def plotgraph(obj1,obj2):
     obj1 = pd.read_json(obj1)
     obj2 = pd.read_json(obj2)
     df = pd.DataFrame(
-    [["T1",obj1['type'].count(), obj2['type'].count()], ["T2", obj1['type'].count(), obj2['type'].count()]],
+    [["T1",obj1['type'].count(), obj2['type'].count()]],
     columns=[ "Detected Object" , "Cars", "Planes"])
-    fig = px.bar(df, x="Detected Object", y=["Cars", "Planes"], barmode='group', height=500, color='type',
+    fig = px.bar(df, x="Detected Object", y=["Cars", "Planes"], barmode='group', height=500,
                  color_discrete_map={'Cars': "#800000", 'Planes': "#0000ff"})
     # st.dataframe(df) # if need to display dataframe "#800000", "#0000ff"
     st.plotly_chart(fig)
-
+    return obj1['type'].count(), obj2['type'].count()
 
 def alerts(content):
     """
@@ -87,10 +87,31 @@ def alerts(content):
     #return None
 
 
-#def header(content):
-#     st.markdown(f'<p style="background-color:#0066cc;color:#33ff33;font-size:24px;border-radius:2%;">{"my header"}</p>', unsafe_allow_html=True)
 
-#header("the content you want to show")
+def stat_bar(obj1t1, obj2t1, obj1t2, obj2t2, obj1t3, obj2t3):
+    global v11, v21, v12, v22, v13, v23
+    graph, alert = st.columns([6,3])
+    with graph:
+        st.success("Detection Status")
+        #if option == "Luxemb Airport" or "Luxemb Airport - Static": # and not "Planes & Cars":
+        v11, v21, v12, v22, v13, v23 = plotgraphs(obj1t1, obj2t1, obj1t2, obj2t2, obj1t3, obj2t3)
+    with alert:
+        st.success("Alert Status")
+        #message = {"Number of Car at T3":v13, "Number of Plane at T3": v23}
+        message = "{} Cars and {} Planes are Detected at T3.".format(v13,v23)
+        #alerts(message)
+        st.write(message)
+
+def stat_bar2(cdgt1planes,cdgt1cars):
+    graph, alert = st.columns([6,3])
+    with graph:
+        st.success("Detection Status")
+        v, v1 = plotgraph(cdgt1planes,cdgt1cars)
+    with alert:
+        st.success("Alert Status")
+        message = "{} Cars and {} Planes are Detected.".format(v,v1)
+        #alerts(message)
+        st.write(message)
 
 
 def my_app(wide_layout:bool=False): #
@@ -100,10 +121,7 @@ def my_app(wide_layout:bool=False): #
         #st.set_page_config(page_icon=LOGO, page_title=APP_TITLE)
         add_title(uselogo=True, logowidth='250px')
 
-    global selected_date
-    List_of_date = ["T1", "T2", "T3"]
-    a, b, c = st.columns([1,1,1])
-    selected_date = a.selectbox('Select a surveillance date', List_of_date)
+
 #    with a:
 #        d = st.date_input(
 #        "Choose a date",
@@ -114,7 +132,7 @@ def my_app(wide_layout:bool=False): #
 
 
     #available_tiles = ["Planes & Cars", "Trees & Buildings", "Luxemb Airport", "Luxemb Airport - Static"]
-    available_tiles = ["Luxemb Airport", "Luxemb Airport - Static"]
+    available_tiles = ["Airport I", "Airport I - Static", "Airport II"]
 
     DEFAULT_TILES = "Luxemb Airport"
     tiles = dict()
@@ -152,13 +170,8 @@ def my_app(wide_layout:bool=False): #
 
 
     hover_style = {"fillOpacity": 0.7}
-    #m.add_geojson(        url, layer_name="Countries",style=style, hover_style=hover_style)
-    #census_data = 'country_census.geojson'
-    trees = "data/trees.geojson"
     cdgt1planes = "data/planes.geojson"
     cdgt1cars = "data/car.geojson"
-    buildings = "data/building.geojson"
-
 
     obj1t1 = "data/luxt1car.geojson"
     obj2t1 = "data/luxt1airplane.geojson"
@@ -167,7 +180,13 @@ def my_app(wide_layout:bool=False): #
     obj1t3 = "data/luxt3car.geojson"
     obj2t3 = "data/luxt3airplane.geojson"
 
-    if option =="Luxemb Airport":
+
+    global v11, v21, v12, v22, v13, v23
+    if option =="Airport I":
+        #global selected_date
+        List_of_date = ["T1", "T2", "T3"]
+        a, b, c = st.columns([1,1,1])
+        selected_date = a.selectbox('Select a surveillance date', List_of_date)
         m = lf.Map(center=[49.634341, 6.22118],zoom=15, google_map="SATELLITE") #SATELLITE , HYBRID
         if selected_date == "T1":
             m.add_geojson("data/luxt1car.geojson", layer_name="Cars", style=car_style, hover_style=hover_style)
@@ -185,10 +204,11 @@ def my_app(wide_layout:bool=False): #
             width=map_specs['width'] * 2,
             height=map_specs['height'] * 1.5,
         )
+        stat_bar(obj1t1, obj2t1, obj1t2, obj2t2, obj1t3, obj2t3)
 
-    if option ==  "Luxemb Airport - Static":
-        checkimg1,checkimg2,checkimg3 = st.columns([2,1,1])
-        img1 = checkimg1.checkbox("Show T1")
+    if option == "Airport I - Static":
+        checkimg1, checkimg2, checkimg3 = st.columns([2,1,1])
+        img1 = checkimg1.checkbox("Show T1", value=True)
         img2 = checkimg2.checkbox("Show T2")
         img3 = checkimg3.checkbox("Show T3")
         if img1:
@@ -200,21 +220,18 @@ def my_app(wide_layout:bool=False): #
         if img3:
             image = Image.open('data/LuxAP3.png')
             st.image(image, caption='T3')
+        stat_bar(obj1t1, obj2t1, obj1t2, obj2t2, obj1t3, obj2t3)
 
+
+    if option == "Airport II":
+        m = lf.Map(center=[49.004448, 2.578354], zoom=16, google_map="SATELLITE")
+        m.add_geojson(cdgt1planes, layer_name="Planes", style=plane_style, hover_style=hover_style)
+        m.add_geojson(cdgt1cars, layer_name="Cars", style=car_style, hover_style=hover_style)
+        # Show map by loading html
+        components.html(
+            m.to_html(),
+            width=map_specs['width'] * 2,
+            height=map_specs['height'] * 1.5,
+        )
+        stat_bar2(cdgt1planes,cdgt1cars)
     ################
-    graph, alert = st.columns([6,3])
-    global v11, v21, v12, v22, v13, v23
-    with graph:
-        st.success("Detection Status")
-        if option == "Planes & Cars":
-            plotgraph(cdgt1planes,cdgt1cars)
-        if option == "Luxemb Airport" or "Luxemb Airport - Static": # and not "Planes & Cars":
-            v11, v21, v12, v22, v13, v23 = plotgraphs(obj1t1, obj2t1, obj1t2, obj2t2, obj1t3, obj2t3)
-
-    with alert:
-        st.success("Alert Status")
-        #message = {"Number of Car at T3":v13, "Number of Plane at T3": v23}
-        message = "{} Cars and {} Planes are Detected at T3.".format(v13,v23)
-        #alerts(message)
-        st.write(message)
-       # print('My name is {} and I am {} years old.'.format(name, age))
