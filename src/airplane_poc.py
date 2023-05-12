@@ -55,7 +55,9 @@ def plotgraphs(obj1t1,obj2t1,obj1t2,obj2t2,obj1t3,obj2t3):
      ["T2", obj1t2['type'].count(), obj2t2['type'].count()],
      ["T3", obj1t3['type'].count(), obj2t3['type'].count()]],
     columns=[ "Time Series" , "Cars", "Planes"])
-    fig = px.bar(df, x="Time Series", y=["Cars", "Planes"], barmode='group', height=500)
+    #fig = px.bar(df, x="Time Series", y=["Cars", "Planes"], barmode='group', height=500)
+    fig = px.bar(df, x="Time Series", y=["Cars", "Planes"], barmode='group', height=500,
+                 color_discrete_map={'Cars': "#800000", 'Planes': "#0000ff"})
     # st.dataframe(df) # if need to display dataframe
     st.plotly_chart(fig)
     return obj1t1['type'].count(), obj2t1['type'].count(),  obj1t2['type'].count(), obj2t2['type'].count(), obj1t3['type'].count(), obj2t3['type'].count()
@@ -67,8 +69,9 @@ def plotgraph(obj1,obj2):
     df = pd.DataFrame(
     [["T1",obj1['type'].count(), obj2['type'].count()], ["T2", obj1['type'].count(), obj2['type'].count()]],
     columns=[ "Detected Object" , "Cars", "Planes"])
-    fig = px.bar(df, x="Detected Object", y=["Cars", "Planes"], barmode='group', height=500)
-    # st.dataframe(df) # if need to display dataframe
+    fig = px.bar(df, x="Detected Object", y=["Cars", "Planes"], barmode='group', height=500, color='type',
+                 color_discrete_map={'Cars': "#800000", 'Planes': "#0000ff"})
+    # st.dataframe(df) # if need to display dataframe "#800000", "#0000ff"
     st.plotly_chart(fig)
 
 
@@ -212,6 +215,6 @@ def my_app(wide_layout:bool=False): #
         st.success("Alert Status")
         #message = {"Number of Car at T3":v13, "Number of Plane at T3": v23}
         message = "{} Cars and {} Planes are Detected at T3.".format(v13,v23)
-        alerts(message)
+        #alerts(message)
         st.write(message)
        # print('My name is {} and I am {} years old.'.format(name, age))
